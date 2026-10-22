@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAID STUDIOS | El Stream Inmobiliario - Sin Cartel</title>
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-card: rgba(28, 28, 30, 0.55);
+            --bg-card-alt: rgba(44, 44, 46, 0.4);
+            --text-light: #f5f5f7;
+            --text-muted: #86868b;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.25);
+            --accent: #ff9f0a; /* Apple Amber / Real Estate Gold */
+            --accent-blue: #06c;
+            --glass-blur: blur(20px);
+        }
+
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: local('-apple-system'), local('BlinkMacSystemFont');
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.47;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow */
+        .bg-glow {
+            position: fixed;
+            top: -10vh; left: 50%; transform: translateX(-50%);
+            width: 75vw; height: 75vh;
+            background: radial-gradient(circle, rgba(255, 159, 10, 0.12) 0%, transparent 60%);
+            filter: blur(90px); z-index: -1; pointer-events: none;
+            transition: background 0.5s ease;
+        }
+
+        /* Smooth Reveal */
+        .reveal { 
+            opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+
+        /* Navbar - Enhanced Apple Style */
+        nav {
+            padding: 12px 5%; border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: rgba(22, 22, 24, 0.8); backdrop-filter: saturate(180%) var(--glass-blur);
+            -webkit-backdrop-filter: saturate(180%) var(--glass-blur);
+            position: sticky; top: 0; z-index: 100;
+        }
+        
+        .logo-container {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .logo-container:hover { opacity: 0.8; }
+        
+        .logo-icon {
+            width: 24px; height: 24px;
+            background: linear-gradient(135deg, #fff 0%, #a1a1a6 100%);
+            border-radius: 6px;
+            display: flex; justify-content: center; align-items: center;
+            color: #000; font-size: 14px; font-weight: 800;
+        }
+        
+        .logo-text { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; color: #fff; }
+        .logo-text span { font-weight: 400; color: var(--text-muted); font-size: 19px; }
+        
+        .btn-outline {
+            background-color: #fff;
+            color: #000;
+            padding: 8px 16px; font-size: 0.85rem; font-weight: 600; border-radius: 980px;
+            text-decoration: none; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+        }
+        .btn-outline:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(255,255,255,0.2); }
+        .btn-outline:active { transform: scale(0.95); }
+
+        /* Badge */
+        .client-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 159, 10, 0.12);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            border-radius: 980px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 24px;
+            color: var(--accent);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Hero */
+        .hero { text-align: center; padding: 110px 5% 70px; max-width: 950px; margin: 0 auto; }
+        .hero h1 { 
+            font-size: 4.2rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1.06; margin-bottom: 24px;
+            background: linear-gradient(180deg, #fff 0%, #a1a1a6 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 1.35rem; color: var(--text-muted); margin-bottom: 40px; font-weight: 500; letter-spacing: -0.015em; max-width: 780px; margin-left: auto; margin-right: auto;}
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 60px 5%; }
+        .section-title { text-align: center; font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; color: #fff; letter-spacing: -0.02em;}
+        .section-subtitle { text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto 50px; font-size: 1.2rem; }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+        /* Features */
+        .feature-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            padding: 40px 30px; border-radius: 24px; backdrop-filter: var(--glass-blur);
+            transition: transform 0.4s ease, border-color 0.4s ease;
+        }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--border-hover); }
+        .feature-card .step-num { font-size: 0.85rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
+        .feature-card h3 { font-size: 1.35rem; color: #fff; margin-bottom: 12px; letter-spacing: -0.01em;}
+        .feature-card p { color: var(--text-muted); font-size: 1rem; line-height: 1.5; }
+
+        /* INTERACTIVE SELECTOR */
+        .style-selector-container {
+            display: flex; justify-content: center; margin-bottom: 40px;
+        }
+        .style-segmented-control {
+            background: rgba(255,255,255,0.08); border-radius: 980px; padding: 6px;
+            display: inline-flex; position: relative; backdrop-filter: blur(10px);
+        }
+        .style-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            padding: 12px 28px; font-size: 1.05rem; font-weight: 600; border-radius: 980px;
+            cursor: pointer; transition: all 0.3s ease; position: relative; z-index: 2;
+        }
+        .style-btn.active { color: #000; }
+        
+        .active-pill {
+            position: absolute; top: 6px; left: 6px; bottom: 6px; width: calc(33.33% - 4px);
+            background: var(--accent); border-radius: 980px; z-index: 1;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Pricing Cards */
+        .pricing-card {
+            background: var(--bg-card); padding: 40px 34px; border-radius: 28px; border: 1px solid var(--border-color);
+            backdrop-filter: var(--glass-blur); transition: all 0.4s ease; display: flex; flex-direction: column;
+        }
+        .pricing-card.premium {
+            background: linear-gradient(180deg, rgba(36, 36, 38, 0.85), rgba(14, 14, 16, 0.9));
+            border-color: var(--accent); position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+        .pricing-card:hover { transform: translateY(-8px); border-color: var(--border-hover); }
+        .pricing-card h4 { font-size: 1.45rem; color: #fff; margin-bottom: 6px; letter-spacing: -0.01em;}
+        .pricing-card .vol { font-size: 0.95rem; color: var(--accent); font-weight: 600; margin-bottom: 18px; transition: color 0.4s ease;}
+        .pricing-card .price { font-size: 3.1rem; font-weight: 700; color: #fff; margin-bottom: 4px; transition: opacity 0.3s ease; letter-spacing: -0.04em;}
+        .pricing-card .price-unit { font-size: 1rem; color: var(--text-muted); font-weight: 500; }
+        .pricing-card .per-video { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 22px; transition: opacity 0.3s ease;}
+        
+        .pricing-list { list-style: none; margin-bottom: 28px; flex-grow: 1; }
+        .pricing-list li {
+            font-size: 0.95rem; color: #d1d1d6; padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: flex-start; gap: 8px;
+        }
+        .pricing-list li:last-child { border-bottom: none; }
+        .pricing-list li span.bullet { color: var(--accent); font-weight: bold; }
+
+        .btn-buy {
+            background: rgba(255,255,255,0.1); color: #fff; text-align: center; padding: 14px; border-radius: 14px;
+            font-weight: 600; text-decoration: none; margin-top: auto; transition: 0.3s;
+        }
+        .btn-buy:hover { background: rgba(255,255,255,0.2); }
+        .pricing-card.premium .btn-buy { background: var(--accent); color: #000; transition: background-color 0.4s ease;}
+        .pricing-card.premium .btn-buy:hover { filter: brightness(1.1); }
+
+        /* Summary Box (Ecosistema Completo) */
+        .ecosystem-summary {
+            margin-top: 50px;
+            background: linear-gradient(135deg, rgba(28, 28, 30, 0.8) 0%, rgba(15, 15, 17, 0.9) 100%);
+            border: 1px solid rgba(255, 159, 10, 0.35);
+            border-radius: 28px;
+            padding: 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            backdrop-filter: var(--glass-blur);
+        }
+        .eco-info { flex: 1; min-width: 280px; }
+        .eco-info .badge-eco { color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; display: block; }
+        .eco-info h3 { font-size: 2rem; color: #fff; margin-bottom: 10px; letter-spacing: -0.02em; }
+        .eco-info p { color: var(--text-muted); font-size: 1.05rem; }
+        .eco-price-box { text-align: right; min-width: 220px; }
+        .eco-price-box .total-label { font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
+        .eco-price-box .total-num { font-size: 3.4rem; font-weight: 700; color: #fff; letter-spacing: -0.04em; line-height: 1; }
+        .eco-price-box .total-sub { font-size: 0.85rem; color: var(--accent); margin-top: 8px; display: block; font-weight: 500; }
+
+        /* Carousel */
+        .portfolio-section { overflow: hidden; padding: 20px 0 40px; position: relative; }
+        .carousel-track { display: flex; gap: 20px; width: max-content; animation: scrollCarousel 20s linear infinite; }
+        .carousel-track:hover { animation-play-state: paused; }
+        .video-card { 
+            width: 260px; height: 460px; border-radius: 16px; overflow: hidden; 
+            border: 1px solid var(--border-color); background: #111; flex-shrink: 0;
+            transition: opacity 0.4s ease;
+        }
+        .video-card video { width: 100%; height: 100%; object-fit: cover; }
+        .portfolio-section::before, .portfolio-section::after {
+            content: ''; position: absolute; top: 0; width: 80px; height: 100%; z-index: 2; pointer-events: none;
+        }
+        .portfolio-section::before { left: 0; background: linear-gradient(to right, var(--bg-dark), transparent); }
+        .portfolio-section::after { right: 0; background: linear-gradient(to left, var(--bg-dark), transparent); }
+
+        @keyframes scrollCarousel { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-260px * 4 - 20px * 4)); } }
+
+        /* Contact Section */
+        .contact-section {
+            text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.02);
+            border-top: 1px solid var(--border-color); margin-top: 40px;
+        }
+        .contact-buttons {
+            display: flex; justify-content: center; gap: 20px; margin-top: 30px; flex-wrap: wrap;
+        }
+        .contact-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background-color: var(--text-light); color: #000;
+            padding: 16px 36px; font-size: 1.1rem; font-weight: 600; border-radius: 980px;
+            text-decoration: none; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+        }
+        .contact-btn:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(255,255,255,0.15); }
+        .contact-btn:active { transform: scale(0.97); }
+
+        .contact-btn-ig {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background-color: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+            padding: 16px 36px; font-size: 1.1rem; font-weight: 600; border-radius: 980px;
+            text-decoration: none; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s;
+        }
+        .contact-btn-ig:hover { transform: scale(1.03); background-color: rgba(255,255,255,0.1); }
+        .contact-btn-ig:active { transform: scale(0.97); }
+
+        footer {
+            text-align: center; padding: 40px 5%; color: #555; font-size: 0.85rem; letter-spacing: 2px;
+        }
+
+        @media (max-width: 900px) { 
+            .grid-3 { grid-template-columns: 1fr; } 
+            .hero h1 { font-size: 3rem; }
+            .ecosystem-summary { text-align: center; justify-content: center; }
+            .eco-price-box { text-align: center; }
+            .style-btn { padding: 10px 18px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow" id="bgGlow"></div>
+
+    <!-- ENHANCED NAVBAR APPLE STYLE -->
+    <nav>
+        <div class="logo-container" onclick="window.scrollTo(0,0)">
+            <div class="logo-icon">M</div>
+            <div class="logo-text">MAID <span>STUDIOS</span></div>
+        </div>
+        <a href="#contacto" class="btn-outline">Aprobar Propuesta</a>
+    </nav>
+
+    <header class="hero reveal active">
+        <div class="client-badge">Propuesta Exclusiva • El Stream Inmobiliario - Sin Cartel</div>
+        <h1>De una grabación a un<br>Ecosistema Total.</h1>
+        <p>Subir un episodio de 2 horas a YouTube ya no alcanza. Transformamos tu sesión mensual en una maquinaria de autoridad, búsquedas en YouTube y tráfico viral en redes cortas sin que muevan un dedo en la post-producción.</p>
+    </header>
+
+    <!-- 3 PILARES DE LA ESTRATEGIA -->
+    <div class="container" style="padding-top: 0;">
+        <div class="grid-3">
+            <div class="feature-card reveal">
+                <span class="step-num">01 • Autoridad & Búsqueda</span>
+                <h3>Episodio Full + Mid-Form</h3>
+                <p>Masterizamos el episodio completo (1-2hs) y extraemos los <strong>5 mejores debates (10 a 20 min)</strong> como videos independientes en YouTube para captar público nuevo que busca temas puntuales del sector inmobiliario.</p>
+            </div>
+            <div class="feature-card reveal">
+                <span class="step-num">02 • Packaging Visual</span>
+                <h3>Miniaturas de Alto CTR</h3>
+                <p>El 80% del éxito en YouTube es el clic inicial. Diseñamos las <strong>6 portadas mensuales</strong> (Episodio + 5 Recortes) aplicando psicología visual, contraste y textos gancho que destacan en el inicio de YouTube.</p>
+            </div>
+            <div class="feature-card reveal">
+                <span class="step-num">03 • Tráfico Masivo</span>
+                <h3>Minería de Clips Verticales</h3>
+                <p>Como parte del ecosistema integral, el valor de los clips cortos baja de $10 a un <strong>precio preferencial de $8 USD</strong>. Ustedes eligen qué aprobar y nosotros les inyectamos edición de alta retención.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE PRICING & SIMULATOR SECTION -->
+    <div class="container" id="planes">
+        <h2 class="section-title reveal">Arquitectura de Inversión</h2>
+        <p class="section-subtitle reveal">Seleccioná la frecuencia de grabación o el volumen de clips para visualizar el impacto de tu ecosistema mensual.</p>
+
+        <!-- Toggle Switch -->
+        <div class="style-selector-container reveal">
+            <div class="style-segmented-control">
+                <div class="active-pill" id="activePill"></div>
+                <button class="style-btn active" onclick="selectPlan(0, 'mensual')" id="btn-mensual">1 Episodio / Mes (Actual)</button>
+                <button class="style-btn" onclick="selectPlan(1, 'quincenal')" id="btn-quincenal">2 Episodios / Mes (Escala)</button>
+                <button class="style-btn" onclick="selectPlan(2, 'semanal')" id="btn-semanal">4 Episodios / Mes (Dominio)</button>
+            </div>
+        </div>
+
+        <!-- 3 PILARES EN CARDS -->
+        <div class="grid-3 reveal" style="margin-top: 20px;">
+            <!-- Pilar 1: YouTube -->
+            <div class="pricing-card premium" id="card-premium">
+                <h4>1. Pack Dominio YouTube</h4>
+                <div class="vol" id="vol-yt">1 Episodio + 5 Recortes (10-20m)</div>
+                <div class="price">$<span id="price-yt">350</span> <span class="price-unit">USD</span></div>
+                <div class="per-video" id="unit-yt">Edición Larga + Media Unificada</div>
+                <ul class="pricing-list">
+                    <li><span class="bullet">✦</span> <span><strong>Masterización Full (1-2hs):</strong> Multicámara dinámica, limpieza de baches y nivelación de audio profesional.</span></li>
+                    <li><span class="bullet">✦</span> <span><strong>Identidad Visual:</strong> Intro, zócalos de invitados y apoyos visuales.</span></li>
+                    <li><span class="bullet">✦</span> <span><strong>5 Segmentos Horizontales:</strong> Videos de 10-20 min listos para posicionar en el buscador de YouTube.</span></li>
+                </ul>
+                <a href="#contacto" class="btn-buy" id="btn-buy-premium">Incluido en Base</a>
+            </div>
+            
+            <!-- Pilar 2: Miniaturas -->
+            <div class="pricing-card">
+                <h4>2. Packaging (Miniaturas)</h4>
+                <div class="vol" id="vol-thumb">6 Portadas de Alto CTR</div>
+                <div class="price">$<span id="price-thumb">150</span> <span class="price-unit">USD</span></div>
+                <div class="per-video" id="unit-thumb">($25 USD por diseño profesional)</div>
+                <ul class="pricing-list">
+                    <li><span class="bullet">✦</span> <span><strong>1 Portada Principal:</strong> Diseño de alto impacto para el episodio completo.</span></li>
+                    <li><span class="bullet">✦</span> <span><strong>5 Portadas Temáticas:</strong> Diseños pensados para que los recortes de 10-20 min exploten en vistas.</span></li>
+                    <li><span class="bullet">✦</span> <span><strong>Psicología de Clic:</strong> Retoque fotográfico, tipografía clara y composición estética.</span></li>
+                </ul>
+                <a href="#contacto" class="btn-buy">Incluido en Base</a>
+            </div>
+
+            <!-- Pilar 3: Clips Verticales -->
+            <div class="pricing-card">
+                <h4>3. Tráfico Viral (Clips)</h4>
+                <div class="vol" id="vol-clips">Tarifa Preferencial Ecosistema</div>
+                <div class="price">$<span id="price-clips">8</span> <span class="price-unit">USD / clip</span></div>
+                <div class="per-video" id="unit-clips">Bonificado (Tarifa normal: $10 USD)</div>
+                <ul class="pricing-list">
+                    <li><span class="bullet">✦</span> <span><strong>Riesgo Cero:</strong> Extraemos todos los hooks y solo abonan los que aprueban (Ej: 19 clips = $152 USD).</span></li>
+                    <li><span class="bullet">✦</span> <span><strong>Edición Retentiva:</strong> Subtítulos dinámicos, SFX, zoom activo y ritmo ágil.</span></li>
+                    <li><span class="bullet">✦</span> <span><strong>Omnipresencia:</strong> Material listo para Reels, TikTok y YouTube Shorts.</span></li>
+                </ul>
+                <a href="#contacto" class="btn-buy">A demanda por aprobación</a>
+            </div>
+        </div>
+
+        <!-- RESUMEN ECOSISTEMA -->
+        <div class="ecosystem-summary reveal" id="ecoSummary">
+            <div class="eco-info">
+                <span class="badge-eco" id="eco-badge">RESUMEN DE PRODUCCIÓN • 1 EPISODIO MENSUAL</span>
+                <h3 id="eco-title">Base Operativa YouTube + Packaging</h3>
+                <p id="eco-desc">Entregables fijos: 1 Podcast Largo (1-2hs) + 5 Videos Temáticos (10-20 min) + 6 Miniaturas de Alto CTR. A esto se suman únicamente los clips verticales que elijan aprobar a $8 USD c/u.</p>
+            </div>
+            <div class="eco-price-box">
+                <span class="total-label">Inversión Base Fija</span>
+                <div class="total-num">$<span id="price-total">500</span> <span style="font-size: 1.2rem; color: var(--text-muted); font-weight: 500;">USD</span></div>
+                <span class="total-sub" id="total-sub">+ Clips aprobados ($8 USD c/u)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MUESTRA DE REELS / CLIPS -->
+    <div class="container" style="padding-top: 20px;">
+        <h2 class="section-title reveal">Estándar Visual en Formato Corto</h2>
+        <p class="section-subtitle reveal">Así lucen las piezas verticales que redirigen tráfico constante hacia los videos largos de tu canal de YouTube.</p>
+
+        <div class="portfolio-section reveal">
+            <div class="carousel-track" id="videoTrack">
+                <!-- Se generan dinámicamente con JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT SECTION -->
+    <div class="contact-section" id="contacto">
+        <h2 class="section-title reveal">¿Activamos el ecosistema completo?</h2>
+        <p class="section-subtitle reveal" style="margin-bottom: 20px;">Ustedes solo se sientan a grabar. Nosotros convertimos esa charla en todo el contenido mensual de Sin Cartel.</p>
+        
+        <div class="contact-buttons reveal">
+            <!-- WhatsApp Button -->
+            <a href="https://wa.me/5493442668219?text=Hola%20Valen!%20Vimos%20la%20propuesta%20web%20para%20El%20Stream%20Inmobiliario%20(Sin%20Cartel)%20y%20queremos%20avanzar%20con%20el%20ecosistema." class="contact-btn" target="_blank">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Confirmar por WhatsApp
+            </a>
+            
+            <!-- Instagram Button -->
+            <a href="https://www.instagram.com/maidstudios/" class="contact-btn-ig" target="_blank">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                </svg>
+                Instagram
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        MAID STUDIOS &copy; 2026 • PROPUESTA PARA EL STREAM INMOBILIARIO (SIN CARTEL)
+    </footer>
+
+    <script>
+        const planData = {
+            mensual: {
+                color: '#ff9f0a', // Amber Gold
+                textColor: '#000',
+                volYt: '1 Episodio + 5 Recortes (10-20m)',
+                priceYt: '350',
+                unitYt: 'Edición Larga + Media Unificada',
+                volThumb: '6 Portadas de Alto CTR',
+                priceThumb: '150',
+                unitThumb: '($25 USD por diseño profesional)',
+                volClips: 'Tarifa Preferencial Ecosistema',
+                priceClips: '8',
+                unitClips: 'Bonificado (Tarifa normal: $10 USD)',
+                ecoBadge: 'RESUMEN DE PRODUCCIÓN • 1 EPISODIO MENSUAL',
+                ecoTitle: 'Base Operativa YouTube + Packaging',
+                ecoDesc: 'Entregables fijos: 1 Podcast Largo (1-2hs) + 5 Videos Temáticos (10-20 min) + 6 Miniaturas de Alto CTR. A esto se suman únicamente los clips verticales que elijan aprobar a $8 USD c/u.',
+                priceTotal: '500',
+                totalSub: '+ Clips aprobados ($8 USD c/u • Ej: 19 clips = $152 USD)',
+                videos: ['medio1.mp4', 'medio2.mp4', 'medio3.mp4', 'medio4.mp4']
+            },
+            quincenal: {
+                color: '#06c', // Apple Blue
+                textColor: '#fff',
+                volYt: '2 Episodios + 10 Recortes (10-20m)',
+                priceYt: '650',
+                unitYt: '$325 USD por episodio completo + recortes',
+                volThumb: '12 Portadas de Alto CTR',
+                priceThumb: '280',
+                unitThumb: '(Precio bonificado por volumen)',
+                volClips: 'Tarifa Preferencial Ecosistema',
+                priceClips: '7.5',
+                unitClips: 'Descuento extra por frecuencia quincenal',
+                ecoBadge: 'RESUMEN DE PRODUCCIÓN • 2 EPISODIOS MENSUALES',
+                ecoTitle: 'Escala Quincenal YouTube + Packaging',
+                ecoDesc: 'Entregables fijos: 2 Podcasts Largos + 10 Videos Temáticos (10-20 min) + 12 Miniaturas de Alto CTR. Mantienen el canal de YouTube activo todas las semanas.',
+                priceTotal: '930',
+                totalSub: '+ Clips aprobados ($7.50 USD c/u)',
+                videos: ['avanzado1.mp4', 'avanzado2.mp4', 'avanzado3.mp4', 'avanzado4.mp4']
+            },
+            semanal: {
+                color: '#bf5af2', // Apple Purple
+                textColor: '#fff',
+                volYt: '4 Episodios + 20 Recortes (10-20m)',
+                priceYt: '1200',
+                unitYt: '$300 USD por episodio completo + recortes',
+                volThumb: '24 Portadas de Alto CTR',
+                priceThumb: '500',
+                unitThumb: '(casi $20 USD c/u por volumen mensual)',
+                volClips: 'Tarifa Preferencial Ecosistema',
+                priceClips: '6.5',
+                unitClips: 'Máxima rentabilidad por volumen masivo',
+                ecoBadge: 'RESUMEN DE PRODUCCIÓN • 4 EPISODIOS MENSUALES',
+                ecoTitle: 'Dominio Absoluto del Nicho Inmobiliario',
+                ecoDesc: 'Entregables fijos: 4 Podcasts Largos + 20 Videos Temáticos + 24 Miniaturas Premium. Saturación total del buscador de YouTube y redes cortas.',
+                priceTotal: '1700',
+                totalSub: '+ Clips aprobados ($6.50 USD c/u)',
+                videos: ['basico1.mp4', 'basico2.mp4', 'basico3.mp4', 'basico4.mp4']
+            }
+        };
+
+        const activePill = document.getElementById('activePill');
+        const bgGlow = document.getElementById('bgGlow');
+        const cardPremium = document.getElementById('card-premium');
+        const volYt = document.getElementById('vol-yt');
+        const btnBuyPremium = document.getElementById('btn-buy-premium');
+        const videoTrack = document.getElementById('videoTrack');
+        const ecoSummary = document.getElementById('ecoSummary');
+
+        renderVideos('mensual');
+
+        function selectPlan(index, planKey) {
+            const data = planData[planKey];
+            const buttons = document.querySelectorAll('.style-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.color = 'var(--text-muted)';
+            });
+            
+            const selectedBtn = buttons[index];
+            selectedBtn.classList.add('active');
+            selectedBtn.style.color = data.textColor;
+
+            const btnWidth = selectedBtn.offsetWidth;
+            activePill.style.width = `${btnWidth}px`;
+            activePill.style.transform = `translateX(${selectedBtn.offsetLeft - 6}px)`;
+            
+            const themeColor = data.color;
+            activePill.style.backgroundColor = themeColor;
+            bgGlow.style.background = `radial-gradient(circle, ${themeColor}28 0%, transparent 60%)`;
+            cardPremium.style.borderColor = themeColor;
+            volYt.style.color = themeColor;
+            btnBuyPremium.style.backgroundColor = themeColor;
+            btnBuyPremium.style.color = data.textColor;
+            ecoSummary.style.borderColor = `${themeColor}66`;
+            document.getElementById('eco-badge').style.color = themeColor;
+            document.getElementById('total-sub').style.color = themeColor;
+
+            const fadeIds = ['price-yt', 'price-thumb', 'price-clips', 'price-total'];
+            fadeIds.forEach(id => document.getElementById(id).parentElement.style.opacity = '0');
+
+            setTimeout(() => {
+                document.getElementById('vol-yt').innerText = data.volYt;
+                document.getElementById('price-yt').innerText = data.priceYt;
+                document.getElementById('unit-yt').innerText = data.unitYt;
+
+                document.getElementById('vol-thumb').innerText = data.volThumb;
+                document.getElementById('price-thumb').innerText = data.priceThumb;
+                document.getElementById('unit-thumb').innerText = data.unitThumb;
+
+                document.getElementById('vol-clips').innerText = data.volClips;
+                document.getElementById('price-clips').innerText = data.priceClips;
+                document.getElementById('unit-clips').innerText = data.unitClips;
+
+                document.getElementById('eco-badge').innerText = data.ecoBadge;
+                document.getElementById('eco-title').innerText = data.ecoTitle;
+                document.getElementById('eco-desc').innerText = data.ecoDesc;
+                document.getElementById('price-total').innerText = data.priceTotal;
+                document.getElementById('total-sub').innerText = data.totalSub;
+
+                fadeIds.forEach(id => document.getElementById(id).parentElement.style.opacity = '1');
+            }, 250);
+        }
+
+        function renderVideos(planKey) {
+            videoTrack.innerHTML = '';
+            const vids = planData[planKey].videos;
+            const loopVids = [...vids, ...vids]; 
+            
+            loopVids.forEach(vid => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.innerHTML = `
+                    <video autoplay loop muted playsinline>
+                        <source src="videos/${vid}" type="video/mp4">
+                    </video>
+                `;
+                videoTrack.appendChild(card);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => selectPlan(0, 'mensual'), 100);
+        });
+        window.addEventListener('resize', () => {
+            const activeIndex = Array.from(document.querySelectorAll('.style-btn')).findIndex(b => b.classList.contains('active'));
+            const keys = ['mensual', 'quincenal', 'semanal'];
+            if (activeIndex >= 0) selectPlan(activeIndex, keys[activeIndex]);
+        });
+
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                if (elementTop < windowHeight - 50) reveals[i].classList.add("active");
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+    </script>
+</body>
+</html>
